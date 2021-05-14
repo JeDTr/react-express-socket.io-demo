@@ -5,9 +5,15 @@ import "./App.css";
 
 const socket = io("ws://localhost:5000");
 
+const roomId = Math.ceil(Math.random() * 2);
+
 function App() {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
+
+  useEffect(() => {
+    socket.emit("join_room", roomId);
+  }, []);
 
   useEffect(() => {
     socket.on("message", (newMessage) => {
@@ -21,7 +27,7 @@ function App() {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    socket.emit("message", inputMessage);
+    socket.emit("message", { roomId, message: inputMessage });
     setInputMessage("");
   };
 
