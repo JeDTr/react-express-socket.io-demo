@@ -1,8 +1,17 @@
-const express = require("express");
+const app = require("express")();
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: { origin: "*" },
+});
 
-const app = express();
 const port = 5000;
 
-app.listen(port, () => {
-  console.log(`Server is running in port ${port}`);
+io.on("connection", (socket) => {
+  socket.on("message", (message) => {
+    io.emit("message", `${socket.id} said ${message}`);
+  });
+});
+
+server.listen(port, () => {
+  console.log(`server is running on port ${port}`);
 });
